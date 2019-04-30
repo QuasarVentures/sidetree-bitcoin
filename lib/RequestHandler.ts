@@ -13,11 +13,15 @@ export default class RequestHandler {
    * @param sidetreeTransactionPrefix prefix used to identify Sidetree transactions in Bitcoin's blockchain
    * @param genesisTransactionNumber the first Sidetree transaction number in Bitcoin's blockchain
    * @param genesisTimeHash the corresponding timehash of genesis transaction number
+   * @param blockchain the blockchain ledger to request to.
+   * @param network the blockchain network to request to.
    */
   public constructor (public bitcoreSidetreeServiceUri: string,
     public sidetreeTransactionPrefix: string,
     public genesisTransactionNumber: number,
-    public genesisTimeHash: string) {
+    public genesisTimeHash: string,
+    public readonly blockchain: 'BTC' | 'BCH',
+    public readonly network: 'mainnet' | 'testnet') {
 
   }
 

@@ -8,4 +8,6 @@ export interface IConfig {
   bitcoinSidetreeGenesisBlockHash: string;
   bitcoinPollingInternalSeconds: number;
   maxSidetreeTransactions: number;
+  blockchain: 'BTC' | 'BCH';
+  network: 'mainnet' | 'testnet';
 }
