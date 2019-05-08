@@ -1,7 +1,5 @@
 FROM node:8-slim
 
-WORKDIR /app
-
 # Installation Dependencies
 RUN apt-get update && \
     apt-get install -y \
@@ -10,16 +8,14 @@ RUN apt-get update && \
     make \
     python
 
-#COPY ./bitcored-services ./
+RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb
+RUN dpkg -i dumb-init_*.deb
 
-RUN npm install bitcore -g --unsafe-perm=true
-EXPOSE 3001 3002 3232 9999 19999
-
-# create node
-RUN bitcore create bitcore-sidetree-node --testnet
 WORKDIR /app/bitcore-sidetree-node
+COPY ./docker/bitcore-sidetree ./
 
-RUN bitcore install insight-api insight-ui
+# Setup Node
+RUN npm config set package-lock false && npm install
 
 # Purge Dependencies
 RUN apt-get purge -y \
@@ -27,33 +23,25 @@ RUN apt-get purge -y \
   apt-get autoclean && \
   apt-get autoremove -y
 
-#RUN npm uninstall -g bitcore
-
-# Setup Node
-#RUN npm config set package-lock false && \
-#  npm install
-
-#RUN ls -la ./node_modules/.bin
-#RUN cat ./node_modules/.bin/bitcored
-
-RUN ls -la
-RUN ls -la
-RUN ls -la data
-RUN cat bitcore-node.json
+RUN rm -rf \
+  node_modules/bitcore-node/test \
+  node_modules/bitcore-node/bin/bitcoin-*/bin/bitcoin-qt \
+  node_modules/bitcore-node/bin/bitcoin-*/bin/test_bitcoin \
+  node_modules/bitcore-node/bin/bitcoin-*-linux64.tar.gz \
+  /dumb-init_*.deb \
+  /root/.npm \
+  /root/.node-gyp \
+  /tmp/* \
+  /var/lib/apt/lists/*
 
 
+# Runtime Things.
+ENV BITCOIN_NETWORK testnet
 
-#apt-get install python libzmq3-dev build-essential
+EXPOSE 3001 3002 3232 9999 19999
 
-
-
-#COPY ./package.json /app
-#COPY ./package-lock.json /app
-#WORKDIR /app
-#
-#EXPOSE 3009
 HEALTHCHECK --interval=5s --timeout=5s --retries=10 CMD curl -f http://localhost:3001/insight/
 
-ENTRYPOINT [ "bitcored" ]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "./bitcore-node-entrypoint.sh"]
 
 VOLUME /app/bitcore-sidetree-node/data
