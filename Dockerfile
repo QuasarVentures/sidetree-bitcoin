@@ -17,6 +17,9 @@ COPY ./docker/bitcore-sidetree ./
 # Setup Node
 RUN npm config set package-lock false && npm install
 
+# Copy Sidetree Module
+COPY ./bitcored-services/sidetree ./node_modules/sidetree
+
 # Purge Dependencies
 RUN apt-get purge -y \
   g++ make python gcc && \
