@@ -2,6 +2,9 @@
 
 Blockchain-specific code for the Sidetree-based DID Method implementation on Bitcoin
 
+## This repo is now deprecated. Code is migrated to with [Sidetree](https://github.com/decentralized-identity/sidetree) repo.
+
+
 ## Getting started
 
 Our reference implementation of the blockchain service is based on bitcored. Here is the list of instructions to deploy Sidetree's extension code along with the bitcored service:
